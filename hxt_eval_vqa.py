@@ -27,7 +27,7 @@ from models.blip_vqa import blip_vqa
 import utils
 import torchvision.transforms as standard_transforms
 
-
+import time
 
 
 @torch.no_grad()
@@ -104,7 +104,7 @@ def main(args, config):
     image = image_tensor.to(device, non_blocking=True)
 
 
-    batch_questions = ["what is the person doing?", "how many person in the picture?", "the person's age?"]
+    batch_questions = ["what is color of the person' hair?", "how many person in the picture?", "the person's age?"]
 
 
     batch_images = torch.cat([image, image, image], 0)
@@ -112,7 +112,11 @@ def main(args, config):
 
     config['inference'] = 'generate'
     if config['inference'] == 'generate':
+        start_time = time.time()
         answers = model(batch_images, batch_questions, train=False, inference='generate')
+        end_time = time.time()
+        duration = end_time-start_time
+        print("answer {} questions, totally cost {} seconds".format(len(batch_questions), duration))
         print('answers:', answers)
         # for answer, ques_id in zip(answers, question_id):
         #     ques_id = int(ques_id.item())
